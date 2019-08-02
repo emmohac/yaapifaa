@@ -13,26 +13,28 @@ func redirect(w http.ResponseWriter, r *http.Request) {
         log.Println("URL Param 'yr' is missing")
         return
     }
-    yr := yr[0]
+    year := yr[0]
+	log.Println("URL param yr is: " + string(year))
 
     qtr, ok := r.URL.Query()["qtr"]
     if !ok || len(qtr[0]) < 1 {
         log.Println("URL Param 'qtr' is missing")
         return
     }
-    qtr := qtr[0]
+    quarter := qtr[0]
+	log.Println("URL param qtr is: "+string(quarter))
 
     code, ok := r.URL.Query()["code"]
     if !ok || len(code[0]) < 1 {
         log.Println("URL Param 'code' is missing")
         return
     }
-    code := code[0]
-
-    getJsonResponse(w, yr, qtr, code)
+    codes := code[0]
+	log.Println("URL Param code is: "+string(codes))
+    getJsonResponse(w, year, quarter, codes)
 }
 
-func getJsonResponse(w http.ResponseWriter, yr, qtr, code) {
+func getJsonResponse(w http.ResponseWriter, theYear, theQuarter, theCode) {
   data := SomeStruct{}
   w.Header().Set("Content-Type", "application/json")
   w.WriteHeader(http.StatusCreated)
