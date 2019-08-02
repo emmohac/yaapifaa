@@ -6,22 +6,25 @@ import (
 	"net/http"
 )
 
+// Data is a model
 type Data struct {
 	Year    string `json:"year"`
 	Quarter string `json:"quarter"`
 	Code    string `json:"code"`
 }
 
+// TheData is an array of model Data. Naming convention will be changed later
 type TheData []Data
 
 func redirect(w http.ResponseWriter, r *http.Request) {
+	// Will make a generic function to verify query param in URL
 	yr, ok := r.URL.Query()["yr"]
 	if !ok || len(yr[0]) < 1 {
 		log.Println("URL Param 'yr' is missing")
 		return
 	}
 	year := yr[0]
-	log.Println("URL param yr is: " + string(year))
+	log.Println("URL param yr is: " + string(year)) // If yr is present, then log it out to verify
 
 	qtr, ok := r.URL.Query()["qtr"]
 	if !ok || len(qtr[0]) < 1 {
@@ -42,10 +45,10 @@ func redirect(w http.ResponseWriter, r *http.Request) {
 	getJSONResponse(w, year, quarter, codes)
 }
 
-func getJSONResponse(w http.ResponseWriter, year string, quarter string, codes string) {
+func getJSONResponse(w http.ResponseWriter, year string, quarter string, codes string) { // Need to have type in parameter
 	data := TheData{
 		Data{
-			Year: year, Quarter: quarter, Code: codes},
+			Year: year, Quarter: quarter, Code: codes}, // Assigning parameters to property of Data
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -53,11 +56,10 @@ func getJSONResponse(w http.ResponseWriter, year string, quarter string, codes s
 	json.NewEncoder(w).Encode(data)
 }
 func main() {
+	// This later can be implemented with gorilla/mux
 	http.HandleFunc("/", redirect)
 	err := http.ListenAndServe(":9090", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
-
-	log.Fatal(http.ListenAndServe(":9090", nil))
 }
